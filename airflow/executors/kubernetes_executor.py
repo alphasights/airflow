@@ -197,12 +197,12 @@ class KubernetesJobWatcher(multiprocessing.Process, LoggingMixin):
         last_resource_version: Optional[str] = None
         if self.multi_namespace_mode:
             list_worker_pods = functools.partial(watcher.stream,
-                                                 kube_client.list_pod_for_all_namespaces,
+                                                 kube_client.list_namespaced_pod,
+                                                 self.namespace,
                                                  **kwargs)
         else:
             list_worker_pods = functools.partial(watcher.stream,
-                                                 kube_client.list_namespaced_pod,
-                                                 self.namespace,
+                                                 kube_client.list_pod_for_all_namespaces,
                                                  **kwargs)
         for event in list_worker_pods():
             task = event['object']
